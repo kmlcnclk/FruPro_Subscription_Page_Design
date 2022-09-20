@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="images/frupro.ico" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Inter"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Mukta:wght@300;400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" type="text/css" href="styles/app.css" />
+    <link rel="stylesheet" type="text/css" href="styles/dropdown.css" />
+    <title>FruPro Subscription Packages</title>
+    <script src="./scripts/jquery-3.6.1.min.js"></script>
+    <script
+      src="https://js.chargebee.com/v2/chargebee.js"
+      data-cb-site="fruprotest-test"
+    ></script>
+    <script src="scripts/plans.js"></script>
+    <script src="scripts/dropdown.js"></script>
+    <script src="scripts/app.js"></script>
+    <script src="scripts/setPlans.js"></script>
+
+    <script type="text/javascript">
+      var cbInstance, cart;
+      const params = new Proxy(new URLSearchParams(window.location.search), {
+        get: (searchParams, prop) => searchParams.get(prop),
+      });
+
+      const customerEmail = params.email;
+      const customerFirstName = params.first_name;
+      const customerLastName = params.last_name;
+
+      console.log(customerEmail, customerFirstName, customerLastName);
+
+      window.addEventListener('DOMContentLoaded', function () {
+        cbInstance = Chargebee.init({
+          site: 'fruprotest-test',
+          isItemsModel: true,
+        });
+
+        cbInstance.setCheckoutCallbacks(function (cart) {
+          return {
+            success: function (hpid) {
+              console.log('success', hpid);
+            },
+          };
+        });
+
+        var customer = {
+          email: customerEmail,
+          first_name: customerFirstName,
+          last_name: customerLastName,
+          billing_address: {
+            first_name: customerFirstName,
+            last_name: customerLastName,
+            //company: "Gurkan's Brothers & Sisters",
+            //phone: "+441234567890",
+            //line1: "10 Downing Street",
+            //line2: "",
+            //city: "London",
+            //zip: "SW1A 2AB",
+            //state: "England",
+            //country: "GB",
+          },
+        };
+
+        cart = cbInstance.getCart();
+        cart.setCustomer(customer);
+
+        let cbPortal = cbInstance.createChargebeePortal();
+
+        ListPackages();
+      });
+    </script>
+  </head>
+  <body>
+    <header class="header">
+      <div class="user-registeration-path">
+        <div class="user-registeration-left">
+          <div class="tick-parent-div">
+            <object data="svgs/tick.svg" type="image/svg+xml"></object>
+          </div>
+          <div class="registration-path-1">
+            <p>User Registration</p>
+          </div>
+        </div>
+        <div class="user-registeration-mid-parent-div">
+          <hr class="header-hr" />
+          <div class="user-registeration-mid">
+            <div class="tick-parent-div">
+              <object data="svgs/tick.svg" type="image/svg+xml"></object>
+            </div>
+            <div class="registration-path-2">
+              <p>Company Registration</p>
+            </div>
+          </div>
+          <hr class="header-hr" />
+        </div>
+
+        <div class="user-registeration-right">
+          <div class="third-number-parent-div">
+            <p>3</p>
+          </div>
+          <div class="registration-path-3">
+            <p>Select Plan</p>
+          </div>
+        </div>
+      </div>
+      <p class="choose-text">
+        Choose the perfect pricing plan to suit your needs
+      </p>
+      <div class="header-div">
+        <div class="dropdown">
+          <button
+            class="select-currency-button dropbtn"
+            id="dropBtn"
+            onclick="dropDownMenuToggle()"
+          >
+            <p class="select-currency">Select Currency</p>
+            <object
+              data="svgs/Chevron.svg"
+              type="image/svg+xml"
+              class="dropbtn-svg"
+            ></object>
+          </button>
+          <div id="myDropdown" class="dropdown-content">
+            <span onclick="changeCurrency('USD')" class="currency">$ USD</span>
+            <span onclick="changeCurrency('GBP')" class="currency">£ GBP</span>
+            <span onclick="changeCurrency('EUR')" class="currency">€ EUR</span>
+          </div>
+        </div>
+        <div
+          style="display: flex; align-items: center; justify-content: center"
+        >
+          <div class="annual-or-monthly">
+            <button
+              class="monthly-button"
+              id="monthly-button"
+              onclick="changeFrequency('Monthly')"
+            >
+              Monthly
+            </button>
+            <button
+              class="annual-button"
+              id="annual-button"
+              onclick="changeFrequency('Annual')"
+            >
+              Annual
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="main">
+      <div>
+        <div class="subscriptions-parent-div">
+          <div class="subscriptions">
+            <div
+              class="short-card basic-plan"
+              data-cb-type="checkout"
+              data-cb-layout="full_page"
+              data-cb-item-0-quantity="1"
+            >
+              <div>
+                <div class="shortCardTextParentDiv">
+                  <div class="shortCardText basic-title"></div>
+                </div>
+                <div class="plan-price-parent-div" id="basic-plan"></div>
+                <div class="plan-properties" id="basic-plan-properties"></div>
+              </div>
+
+              <div class="choose-plan-button-parent-div">
+                <button class="choose-plan-button">Choose Plan</button>
+              </div>
+            </div>
+            <div
+              class="short-card pro-plan"
+              data-cb-type="checkout"
+              data-cb-layout="full_page"
+              data-cb-item-0-quantity="1"
+            >
+              <div>
+                <div class="shortCardTextParentDiv">
+                  <div class="shortCardText pro-title"></div>
+                </div>
+                <div class="plan-price-parent-div" id="pro-plan"></div>
+                <div class="plan-properties" id="pro-plan-properties"></div>
+              </div>
+
+              <div class="choose-plan-button-parent-div">
+                <button class="choose-plan-button">Choose Plan</button>
+              </div>
+            </div>
+            <div
+              class="short-card super-plan"
+              data-cb-type="checkout"
+              data-cb-layout="full_page"
+              data-cb-item-0-quantity="1"
+            >
+              <div>
+                <div class="shortCardTextParentDiv">
+                  <div class="shortCardText super-title"></div>
+                </div>
+                <div class="plan-price-parent-div" id="super-plan"></div>
+                <div class="plan-properties" id="super-plan-properties"></div>
+              </div>
+
+              <div class="choose-plan-button-parent-div">
+                <button class="choose-plan-button">Choose Plan</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="compare-all-features">
+          <a href="#compareAllFeatures"> <h3>Compare all features</h3></a>
+        </div>
+      </div>
+      <div class="middle">
+        <div style="position: relative; display: flex">
+          <object
+            data="svgs/Fill-17.svg"
+            type="image/svg+xml"
+            class="left-side"
+          ></object>
+          <object
+            data="svgs/Fill-20.svg"
+            type="image/svg+xml"
+            class="middle-side"
+          ></object>
+          <object
+            data="svgs/Fill-13.svg"
+            type="image/svg+xml"
+            class="right-side"
+          ></object>
+          <div class="middle-frupro">
+            <object
+              data="svgs/Fill-1.svg"
+              type="image/svg+xml"
+              class="middle-f"
+            ></object>
+            <object
+              data="svgs/Fill-3.svg"
+              type="image/svg+xml"
+              class="middle-r"
+            ></object>
+            <object
+              data="svgs/Fill-5.svg"
+              type="image/svg+xml"
+              class="middle-u"
+            ></object>
+            <object
+              data="svgs/Fill-7.svg"
+              type="image/svg+xml"
+              class="middle-p"
+            ></object>
+            <object
+              data="svgs/Fill-3.svg"
+              type="image/svg+xml"
+              class="middle-r2"
+            ></object>
+            <object
+              data="svgs/Fill-11.svg"
+              type="image/svg+xml"
+              class="middle-o"
+            ></object>
+          </div>
+        </div>
+        <p>Fruit and Veg Trade Simplified</p>
+      </div>
+      <div class="full-feature-comparison-parent" id="compareAllFeatures">
+        <h3>Full feature comparison</h3>
+        <div class="full-feature-parent-div">
+          <div class="full-feature">
+            <div
+              class="full-card basic-plan"
+              data-cb-type="checkout"
+              data-cb-layout="full_page"
+              data-cb-item-0-quantity="1"
+            >
+              <div>
+                <div class="shortCardTextParentDiv">
+                  <div class="shortCardText basic-title"></div>
+                </div>
+                <div class="plan-properties" id="basic-plan-full-feature"></div>
+              </div>
+
+              <div class="choose-plan-button-parent-div">
+                <button class="choose-plan-button">Choose Plan</button>
+              </div>
+            </div>
+            <div
+              class="full-card pro-plan"
+              data-cb-type="checkout"
+              data-cb-layout="full_page"
+              data-cb-item-0-quantity="1"
+            >
+              <div>
+                <div class="shortCardTextParentDiv">
+                  <div class="shortCardText pro-title"></div>
+                </div>
+                <div class="plan-properties" id="pro-plan-full-feature"></div>
+              </div>
+              <div class="choose-plan-button-parent-div">
+                <button class="choose-plan-button">Choose Plan</button>
+              </div>
+            </div>
+
+            <div
+              class="full-card super-plan"
+              data-cb-type="checkout"
+              data-cb-layout="full_page"
+              data-cb-item-0-quantity="1"
+            >
+              <div>
+                <div class="shortCardTextParentDiv">
+                  <div class="shortCardText super-title"></div>
+                </div>
+                <div class="plan-properties" id="super-plan-full-feature"></div>
+              </div>
+              <div
+                class="choose-plan-button-parent-div"
+                style="margin-top: 30px"
+              >
+                <button class="choose-plan-button">Choose Plan</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-first-div">
+        <div>
+          <h5 class="footer-header">customer care</h5>
+          <div class="frupro-email">
+            <object data="svgs/email.svg" type="image/svg+xml"></object>
+            <p>email@frupro.com</p>
+          </div>
+          <div class="frupro-phone">
+            <div class="frupro-phone-svgs">
+              <object
+                data="svgs/phone1.svg"
+                type="image/svg+xml"
+                class="frupro-phone-svgs-1"
+              ></object>
+              <object
+                data="svgs/phone2.svg"
+                type="image/svg+xml"
+                class="frupro-phone-svgs-2"
+              ></object>
+              <object
+                data="svgs/phone2.svg"
+                type="image/svg+xml"
+                class="frupro-phone-svgs-3"
+              ></object>
+            </div>
+            <p>(+44) 939 333 6666</p>
+          </div>
+        </div>
+        <div class="footer-about-us">
+          <h5 class="footer-header">about us</h5>
+          <a href="https://frupro.com/our-story/" target="_blank">
+            <p>About FruPro</p>
+          </a>
+          <a href="https://frupro.com/faqs/" target="_blank">
+            <p>FAQ’s</p>
+          </a>
+        </div>
+        <div class="footer-follow-us">
+          <h5 class="footer-header">follow us</h5>
+          <div class="footer-follow-us-svgs">
+            <a href="https://www.facebook.com/fruproworld/" target="_blank">
+              <img
+                src="https://app.frupro.com/static/svg/ic_facebook.svg"
+                alt="facebook"
+                width="30px"
+                height="30px"
+              />
+            </a>
+            <a href="https://twitter.com/fruproworld" target="_blank">
+              <img
+                src="https://app.frupro.com/static/svg/ic_twitter.svg"
+                alt="twitter"
+                width="30px"
+                height="30px"
+              />
+            </a>
+            <a href="https://www.linkedin.com/company/frupro/" target="_blank">
+              <img
+                src="https://app.frupro.com/static/svg/ic_linkedin.svg"
+                alt="linkedin"
+                width="30px"
+                height="30px"
+              />
+            </a>
+            <a href="https://www.instagram.com/fruproworld/" target="_blank">
+              <img
+                src="https://app.frupro.com/static/svg/ic_instagram.svg"
+                alt="instagram"
+                width="30px"
+                height="30px"
+              />
+            </a>
+          </div>
+        </div>
+        <div>
+          <h5 class="footer-header">download mobile app</h5>
+          <div style="display: flex">
+            <div
+              style="
+                margin-left: 5px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+              "
+            >
+              <a
+                href="https://apps.apple.com/vn/app/frupro-trade-fresh-produce/id1540040041"
+                target="_blank"
+                style="cursor: pointer"
+              >
+                <img
+                  src="https://app.frupro.com/static/svg/ic_app_store.svg"
+                  alt="app store"
+                />
+              </a>
+              <a
+                href="https://play.google.com/store/apps/details?id=com.frupro.user"
+                target="_blank"
+                style="cursor: pointer"
+              >
+                <img
+                  src="https://app.frupro.com/static/svg/ic_google_play.svg"
+                  alt="google play"
+                />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-second-div">
+        <button>
+          <div class="footer-second-div-svgs">
+            <object
+              data="svgs/chat.svg"
+              type="image/svg+xml"
+              class="footer-second-div-svg-0"
+            ></object>
+            <object
+              data="svgs/chat-1.svg"
+              type="image/svg+xml"
+              class="footer-second-div-svg-1"
+            ></object>
+            <object
+              data="svgs/chat2.svg"
+              type="image/svg+xml"
+              class="footer-second-div-svg-2"
+            ></object>
+            <object
+              data="svgs/chat2.svg"
+              type="image/svg+xml"
+              class="footer-second-div-svg-3"
+            ></object>
+          </div>
+          <span style="cursor: pointer"> Chats (9+) </span>
+        </button>
+      </div>
+      <div class="footer-third-div">
+        <p style="color: #858688">
+          Copyright © 2021 FruPro Ltd. All rights reserved.
+        </p>
+        <div class="footer-bottom-links">
+          <a
+            href="https://frupro.com/legal/terms-and-conditions/"
+            target="_blank"
+          >
+            <p>Terms & Conditions</p>
+          </a>
+          <a
+            href="https://frupro.com/legal/app-terms-and-conditions/"
+            target="_blank"
+          >
+            <p>App Terms & Conditions</p>
+          </a>
+          <a
+            href="https://frupro.com/legal/privacy-and-cookie-policy/"
+            target="_blank"
+          >
+            <p>Privacy & Cookie policy</p>
+          </a>
+          <a href="https://frupro.com/help/" target="_blank">
+            <p>Help center</p>
+          </a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
